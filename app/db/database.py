@@ -1,4 +1,5 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from collections.abc import AsyncGenerator
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     async_sessionmaker,
@@ -6,22 +7,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-
-class Settings(BaseSettings):
-    database_url: str
-    redis_url: str
-    app_name: str = "RAGForge"
-    environment: str = "development"
-    jwt_secret: str
-    jwt_algorithm: str = "HS256"
-
-    model_config = SettingsConfigDict(
-        env_file=".env",
-        extra="ignore",
-    )
-
-
-settings = Settings()
+from app.core.config import settings
 
 
 engine = create_async_engine(
@@ -42,6 +28,6 @@ class Base(DeclarativeBase):
     pass
 
 
-async def get_db():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session
