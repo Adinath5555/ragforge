@@ -1,8 +1,8 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
 
+from app.api.auth import router as auth_router
 from app.db.database import get_db
 
 
@@ -11,6 +11,10 @@ app = FastAPI(
     description="Production-grade Multi-Tenant RAG Platform",
     version="0.1.0",
 )
+
+
+# API Routers
+app.include_router(auth_router)
 
 
 @app.get("/health")
